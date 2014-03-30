@@ -59,18 +59,24 @@
 
 
 (defn calc-weight
-  "w_d 是 dn 的系数，w_x 是 xn 的系数，last-weight，比如对第五年则为第6年"
+  "w 是 [dn 的系数，xn 的系数]，last-weight，比如对第五年则为第6年"
   [last-weight]
   (let [w [(+ (- 高负荷单台年产量
                  低负荷单台年产量)
               (* last-weight (- 高负荷机器完好率 低负荷机器完好率)))
            (+ 低负荷单台年产量 (* last-weight 低负荷机器完好率))]]
     (if (> (first w) 0)
-      (apply + w)
-      (last w))))
+      (do
+        (println "完全投入高负荷")
+        (apply + w))
+      (do
+        (println "完全投入低负荷")
+        (last w)))))
 
 (defn get-weight [n]
   (nth (iterate calc-weight 0) n))
+
+(println "决策：依次由第五年至第一年")
 
 (math/round
  (* (get-weight 年数) 机器数量))
