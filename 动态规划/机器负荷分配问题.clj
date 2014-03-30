@@ -1,3 +1,6 @@
+(ns machine.core
+  (:require [clojure.math.numeric-tower :as math]))
+
 ;; 某种机器可以在高、低两种负荷下生产。高负荷生产条件
 ;; 下机器完好率为0.7,即如果年初有u台完好机器投入生产,则
 ;; 年末完好的机器数量为0.7u台。系数0.7称为完好率。年初投入
@@ -8,8 +11,8 @@
 ;; 五年的总产量为最高。
 
 ;; 定义基本常量
-(def 高负荷机器完好率 0.7)
-(def 低负荷机器完好率 0.9)
+(def 高负荷机器完好率 (/ 7 10)) ;; 用分数来保证精度
+(def 低负荷机器完好率 (/ 9 10))
 (def 高负荷单台年产量 8)
 (def 低负荷单台年产量 5)
 (def 机器数量 1000)
@@ -69,4 +72,5 @@
 (defn get-weight [n]
   (nth (iterate calc-weight 0) n))
 
-(* (get-weight 年数) 机器数量)
+(math/round
+ (* (get-weight 年数) 机器数量))
