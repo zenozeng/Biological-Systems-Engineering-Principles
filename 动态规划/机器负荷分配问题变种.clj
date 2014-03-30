@@ -56,25 +56,22 @@
                           (- 高负荷机器完好率 低负荷机器完好率)))
                     低负荷单台年产量))
 
-(defn calc-weight
-  "w 是 [dn 的系数，xn 的系数]，last-weight，比如对第五年则为第6年"
-  [last-weight]
+
+(defn iter
+  "w 是 [dn 的系数，xn 的系数]，上次权重，比如对第五年则为第6年"
+  [[上次权重 上次决策]]
   (let [w [(+ (- 高负荷单台年产量
                  低负荷单台年产量)
-              (* last-weight (- 高负荷机器完好率 低负荷机器完好率)))
-           (+ 低负荷单台年产量 (* last-weight 低负荷机器完好率))]]
+              (* 上次权重 (- 高负荷机器完好率 低负荷机器完好率)))
+           (+ 低负荷单台年产量 (* 上次权重 低负荷机器完好率))]]
     (if (> (first w) 0)
-      (do
-        (println "完全投入高负荷")
-        (apply + w))
-      (do
-        (println "完全投入低负荷")
-        (last w)))))
-
-(println "决策：依次由第五年至第一年")
-(println "第五年：完全投入高负荷")
+      [(apply + w) "完全投入高负荷"]
+      [(last w) "完全投入低负荷"])))
 
 (defn get-weight [n]
-  (nth (iterate calc-weight init-weight) (- n 1)))
+  (nth (map first (iterate iter [init-weight nil])) n))
 
-(math/round (+ (* (get-weight 年数) 机器数量) offset))
+;; 决策
+(reverse (take 年数 (rest (map last (iterate iter [init-weight nil])))))
+
+(math/round (+ (* (get-weight (dec 年数) ) 机器数量) offset))
