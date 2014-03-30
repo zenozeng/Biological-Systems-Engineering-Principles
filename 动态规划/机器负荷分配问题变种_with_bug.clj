@@ -1,6 +1,11 @@
 (ns machine.core
   (:require [clojure.math.numeric-tower :as math]))
 
+;; 这个版本的算法有 Bug
+;; 在最后一年计算 dn 的时候
+;; 要求第五年的 高产机器为 780
+;; 但是第五年只有 729 台机器, 这不可能
+
 ;; 某种机器可以在高、低两种负荷下生产。高负荷生产条件
 ;; 下机器完好率为0.7,即如果年初有u台完好机器投入生产,则
 ;; 年末完好的机器数量为0.7u台。系数0.7称为完好率。年初投入
@@ -72,6 +77,7 @@
   (nth (map first (iterate iter [init-weight nil])) n))
 
 ;; 决策
-(reverse (take 年数 (rest (map last (iterate iter [init-weight nil])))))
+;; 第一至第四年
+(def 决策 (reverse (take (dec 年数) (rest (map last (iterate iter [init-weight nil]))))))
 
 (math/round (+ (* (get-weight (dec 年数) ) 机器数量) offset))
