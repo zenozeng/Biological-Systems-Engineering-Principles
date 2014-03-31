@@ -73,6 +73,11 @@
 
 ;; 决策
 ;; 第一至第四年
-(def 决策 (reverse (take (dec 年数) (rest (map last (iterate iter [init-weight nil]))))))
+(reverse (take (dec 年数) (rest (map last (iterate iter [init-weight nil])))))
 
 (math/round (+ (* (get-weight (dec 年数) ) 机器数量) offset))
+
+;; => ("完全投入低负荷" "完全投入低负荷" "完全投入低负荷" "完全投入低负荷")
+;; 按照决策易得
+;; [机器数, 决策高负荷数, 决策低负荷数]
+;; [1000, 0, 1000], [900, 0, 900], [810, 0, 810], [729, 0, 729], [656, 204 452]
